@@ -1,31 +1,47 @@
-# Rafiki (رفيقي)
+# Rafiki (رفيقي) — your friend in Abu Dhabi
 
-Your companion for moving to, settling in, and building a future in Abu Dhabi.
-You talk to it on **WhatsApp**; every tip the community shares feeds a **living map** of
-real rents, reported scams, trusted landlords, and the nearest clinic — built by newcomers,
-for the next newcomer.
+Rafiki is a **WhatsApp-first AI companion** that helps people move to, settle in, and build
+a future in Abu Dhabi. You message Rafiki like a friend — by **text or voice note** — and he:
 
-Built for the **OpenAI × Hub71 hackathon, Abu Dhabi** (2026-10-02).
-Full spec, build plan, and demo script: **[`rafiki.md`](./rafiki.md)**.
+- **Guides you through the official steps** to settle in (Emirates ID, Tawtheeq tenancy,
+  bank account, SIM, driving licence), grounded in official UAE / Abu Dhabi sources.
+- **Connects you to a real community** of people with apartments, offices, cars and
+  services to offer — by name and phone.
+- **Lets you post your own offer** in seconds; it appears live on a community map.
+- **Acts as your community manager**: he curates what's shared, keeps spam out with an AI
+  quality gate, surfaces what's happening (events and interest circles), and introduces the
+  right people to each other.
+- **Replies in your language** (Arabic, English, Hindi, Urdu) and **remembers the
+  conversation**.
 
-## Try it
-- **WhatsApp:** message `+971585946739`
-- **Live map:** `https://<rafiki>.vercel.app` *(fill in after deploy)*
+Everything the community shares builds a living map and dataset that makes the city easier
+for the next person who arrives.
 
-## Run it yourself
+## Live
+
+- **Website:** https://rafiki-sage.vercel.app
+- **WhatsApp:** message **+971 58 594 6739** (or scan the QR on the site) — text or voice note
+
+## How it works
+
+- **WhatsApp (WHAPI)** ⇄ a **Next.js** webhook on **Vercel**
+- **OpenAI** — GPT for understanding, intent routing and tool-calling; **Whisper** for voice notes
+- **Supabase** (Postgres + realtime) for the community data and conversation memory
+- **Leaflet + OpenStreetMap** for the live map (bounded to the UAE)
+
+## What makes it different
+
+- **Not a chat box** — a WhatsApp concierge + a live community map + offers + interest communities.
+- A **unique, community-built dataset** of real offers and tips, with contacts.
+- **AI does real work**: intent routing, grounded answers, a quality/spam gate, matching
+  people to offers, and voice transcription.
+
+## Run locally
+
 ```bash
-git clone <this-repo>
-cd rafiki
 npm install
-cp .env.example .env.local   # then fill in the values (see .env.example)
+cp .env.example .env.local   # fill in the keys (see .env.example)
 npm run dev
 ```
-Deploy: push to GitHub → import into **Vercel** → add the same env vars → set the
-WHAPI webhook to `https://<your-deploy>.vercel.app/api/webhooks/whapi`.
 
-## Stack
-Next.js (Vercel) · Claude (Anthropic, tool calling) · WHAPI (WhatsApp) · Supabase (store + realtime) · Leaflet + OpenStreetMap.
-
-## Status
-Pre-build scaffold. Hackathon scope = WhatsApp report → live community map pin.
-"What's next": skill-swap, interest circles, bot-planned events, and an HR/B2B onboarding model.
+Built solo by **Meriem Haouat** for the **OpenAI × Hub71 hackathon, Abu Dhabi**.
