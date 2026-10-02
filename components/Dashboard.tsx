@@ -27,8 +27,8 @@ const MapView = dynamic(() => import("./MapView"), {
   ),
 });
 
-const WHATSAPP_DISPLAY = "+971 58 572 6739";
-const WHATSAPP_LINK = "https://wa.me/971585726739";
+const WHATSAPP_DISPLAY = "+971 58 594 6739";
+const WHATSAPP_LINK = "https://wa.me/971585946739";
 const waWith = (text: string) => `${WHATSAPP_LINK}?text=${encodeURIComponent(text)}`;
 
 const HELP = [
@@ -148,7 +148,7 @@ export default function Dashboard() {
         <div className="relative mx-auto max-w-[1400px] px-5 py-14 lg:px-8 lg:py-20">
           <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-upfleet-yellow">Welcome to Abu Dhabi</span>
           <h1 className="mt-3 max-w-2xl font-heading text-[2.1rem] font-semibold leading-[1.08] tracking-brand-tight text-white lg:text-[3rem]">
-            Your companion for moving to, settling in, and building a future here.
+            I’m Rafiki — your friend in Abu Dhabi.
           </h1>
           <p className="mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-white/80 lg:text-[1.0625rem]">
             Message Rafiki on WhatsApp. He walks you through the official steps, and

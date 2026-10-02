@@ -9,7 +9,7 @@ Built for the **OpenAI × Hub71 hackathon, Abu Dhabi** (2026-10-02).
 Full spec, build plan, and demo script: **[`rafiki.md`](./rafiki.md)**.
 
 ## Try it
-- **WhatsApp:** message `+971585726739`
+- **WhatsApp:** message `+971585946739`
 - **Live map:** `https://<rafiki>.vercel.app` *(fill in after deploy)*
 
 ## Run it yourself
