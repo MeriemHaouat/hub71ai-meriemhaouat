@@ -47,8 +47,9 @@ export function verifyWhapiSignature(rawBody: string, signature?: string | null)
 
 /** Pull text + reply target out of a WHAPI webhook payload. */
 export interface InboundMessage {
-  text: string;
   chatId: string;
+  text?: string;
+  audio?: { id?: string; link?: string; mime?: string };
 }
 
 export function parseInbound(payload: any): InboundMessage[] {
@@ -56,10 +57,19 @@ export function parseInbound(payload: any): InboundMessage[] {
   const out: InboundMessage[] = [];
   for (const m of messages) {
     if (m?.from_me) continue; // ignore our own outgoing echoes
-    if (m?.type && m.type !== "text") continue; // text only for the demo
-    const text: string | undefined = m?.text?.body ?? m?.body;
     const chatId: string | undefined = m?.chat_id ?? m?.from;
-    if (text && chatId) out.push({ text: text.trim(), chatId });
+    if (!chatId) continue;
+
+    const text: string | undefined = m?.text?.body ?? m?.body;
+    const media = m?.voice ?? m?.audio; // WhatsApp voice notes / audio
+    if (text) {
+      out.push({ chatId, text: text.trim() });
+    } else if (media) {
+      out.push({
+        chatId,
+        audio: { id: media.id, link: media.link, mime: media.mime_type ?? media.mime },
+      });
+    }
   }
   return out;
 }

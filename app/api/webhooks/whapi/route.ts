@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleMessage } from "@/lib/reports";
 import { parseInbound, sendWhatsApp, verifyWhapiSignature } from "@/lib/whapi";
+import { transcribeVoice } from "@/lib/transcribe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,7 +39,21 @@ export async function POST(req: NextRequest) {
   // whole batch — webhooks should return 200 so WHAPI doesn't retry-storm.
   for (const msg of inbound) {
     try {
-      const { reply } = await handleMessage(msg.text, "whatsapp", msg.chatId);
+      let text = msg.text;
+      if (!text && msg.audio) {
+        try {
+          text = await transcribeVoice(msg.audio);
+        } catch (e) {
+          console.error("[whapi] transcription failed:", e);
+          await sendWhatsApp(
+            msg.chatId,
+            "Sorry, I couldn't quite catch that voice note — could you resend it or type it out? 🙏",
+          ).catch(() => {});
+          continue;
+        }
+      }
+      if (!text) continue;
+      const { reply } = await handleMessage(text, "whatsapp", msg.chatId);
       await sendWhatsApp(msg.chatId, reply);
     } catch (err) {
       console.error("[whapi] failed to process message:", err);
