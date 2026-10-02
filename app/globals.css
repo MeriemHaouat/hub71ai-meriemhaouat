@@ -49,7 +49,8 @@ h6 {
   }
 }
 .animate-marquee {
-  animation: marquee 45s linear infinite;
+  animation: marquee 90s linear infinite;
+  will-change: transform;
 }
 .animate-marquee:hover {
   animation-play-state: paused;

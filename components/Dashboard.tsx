@@ -54,11 +54,21 @@ interface Community {
 const COMMUNITIES = communitiesData as Community[];
 const OFFERS = (listingsData as any[]).slice(0, 8);
 
+const ASK_EXAMPLES = [
+  "I have an apartment I want to rent out",
+  "I'm selling my car — can you post it?",
+  "Find me a flat in Al Saadiyat",
+  "How do I get my Emirates ID?",
+  "Anything happening this weekend?",
+];
+
 export default function Dashboard() {
   const [reports, setReports] = useState<Report[]>([]);
   const [newestId, setNewestId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const [openCommunity, setOpenCommunity] = useState<Community | null>(null);
+  const [openOffer, setOpenOffer] = useState<any | null>(null);
+  const [joined, setJoined] = useState<Record<string, boolean>>({});
 
   const addReport = useCallback((r: Report) => {
     setReports((prev) => (prev.some((x) => x.id === r.id) ? prev : [r, ...prev]));
@@ -156,6 +166,19 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Intro — who Rafiki is */}
+      <section className="border-b border-upfleet-border bg-white">
+        <div className="mx-auto max-w-[760px] px-5 py-7 text-center lg:px-8">
+          <p className="text-[0.9375rem] leading-relaxed text-upfleet-secondary lg:text-[1rem]">
+            Rafiki is your friend in Abu Dhabi. He lives on WhatsApp, so there is nothing
+            to download — just message him the way you would a local who knows the city.
+            He guides you through the official steps to settle in, and introduces you to
+            real people in the community who have homes, offers and help to share. The more
+            people take part, the easier Rafiki makes the city for whoever arrives next.
+          </p>
+        </div>
+      </section>
+
       {/* Live updates ticker */}
       {ticker.length > 0 && (
         <section className="border-b border-upfleet-border bg-white">
@@ -188,22 +211,28 @@ export default function Dashboard() {
             alt="Scan to chat with Rafiki on WhatsApp"
             className="h-28 w-28 shrink-0 rounded-xl border border-upfleet-border"
           />
-          <div className="text-center sm:text-left">
+          <div className="flex-1 text-center sm:text-left">
             <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
-              Try Rafiki now — scan to chat
+              Talk to Rafiki
             </h2>
             <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">
               Point your camera at the code to open WhatsApp, or message{" "}
               <span className="font-medium text-upfleet-dark">{WHATSAPP_DISPLAY}</span>.
+              Anyone can scan and start chatting right away.
             </p>
-            <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex items-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-all duration-200 hover:-translate-y-px hover:bg-[#1a1d24] hover:shadow-premium"
-            >
-              <MessageCircle size={15} strokeWidth={2} /> Chat with Rafiki
-            </a>
+            <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+              {ASK_EXAMPLES.map((ex) => (
+                <a
+                  key={ex}
+                  href={waWith(ex)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-upfleet-border bg-upfleet-section-alt px-3 py-1.5 text-[0.75rem] text-upfleet-secondary tracking-brand transition-colors hover:border-upfleet-dark hover:text-upfleet-dark"
+                >
+                  “{ex}”
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -262,15 +291,13 @@ export default function Dashboard() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {OFFERS.map((o) => (
-              <div key={o.id} className="flex flex-col rounded-2xl border border-upfleet-border bg-white p-4 shadow-card">
+              <button key={o.id} onClick={() => setOpenOffer(o)} className="flex flex-col rounded-2xl border border-upfleet-border bg-white p-4 text-left shadow-card transition-all hover:-translate-y-px hover:shadow-card-hover">
                 <span className="inline-flex w-fit items-center rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-upfleet-secondary">{o.category}</span>
                 <h3 className="mt-2 font-heading text-[0.875rem] font-semibold tracking-brand text-upfleet-dark">{o.title}</h3>
                 <p className="mt-1 line-clamp-2 text-[0.75rem] leading-snug text-upfleet-secondary">{o.detail}</p>
                 <p className="mt-2 text-[0.6875rem] text-upfleet-tertiary">{o.poster} · {o.posted}</p>
-                <a href={waWith(`Hi Rafiki, I'm interested in "${o.title}" (${o.area}). Can you connect me?`)} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[0.75rem] font-medium text-upfleet-blue">
-                  Connect via Rafiki →
-                </a>
-              </div>
+                <span className="mt-3 inline-flex items-center gap-1 text-[0.75rem] font-medium text-upfleet-blue">View &amp; connect →</span>
+              </button>
             ))}
           </div>
         </section>
@@ -318,22 +345,60 @@ export default function Dashboard() {
                 <h4 className="font-heading text-[0.875rem] font-semibold tracking-brand text-upfleet-dark">Upcoming</h4>
               </div>
               <ul className="space-y-2">
-                {openCommunity.events.map((e) => (
-                  <li key={e.title} className="flex items-start gap-3 rounded-xl border border-upfleet-border bg-upfleet-section-alt px-3 py-2.5">
-                    <span className="mt-0.5 shrink-0 rounded-md bg-upfleet-dark px-2 py-0.5 text-[0.625rem] font-semibold text-white">{e.when}</span>
-                    <span className="text-[0.8125rem] text-upfleet-body">
-                      {e.title} <span className="text-upfleet-tertiary">@ {e.where}</span>
-                    </span>
-                  </li>
-                ))}
+                {openCommunity.events.map((e) => {
+                  const key = `${openCommunity.name}::${e.title}`;
+                  const going = joined[key];
+                  return (
+                    <li key={e.title} className="flex items-center justify-between gap-3 rounded-xl border border-upfleet-border bg-upfleet-section-alt px-3 py-2.5">
+                      <div className="flex items-start gap-3">
+                        <span className="mt-0.5 shrink-0 rounded-md bg-upfleet-dark px-2 py-0.5 text-[0.625rem] font-semibold text-white">{e.when}</span>
+                        <span className="text-[0.8125rem] text-upfleet-body">
+                          {e.title} <span className="text-upfleet-tertiary">@ {e.where}</span>
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setJoined((j) => ({ ...j, [key]: true }))}
+                        disabled={going}
+                        className={`shrink-0 rounded-full px-3 py-1 text-[0.6875rem] font-semibold transition-colors ${going ? "bg-upfleet-positive/10 text-upfleet-positive" : "bg-upfleet-dark text-white hover:bg-[#1a1d24]"}`}
+                      >
+                        {going ? "Going ✓" : "Join"}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
-            <a href={waWith(`Hi Rafiki, what's coming up in the ${openCommunity.name} community? I'd like to take part.`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
-              <MessageCircle size={15} strokeWidth={2} /> Ask Rafiki to join
+            <p className="mt-5 text-center text-[0.6875rem] text-upfleet-tertiary">
+              Just tap Join — no account, no group needed. Or message Rafiki on WhatsApp and
+              he’ll remind you.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Offer detail drawer (right sidebar) */}
+      {openOffer && (
+        <div className="fixed inset-0 z-[1200] flex justify-end" onClick={() => setOpenOffer(null)}>
+          <div className="absolute inset-0 bg-upfleet-dark/40 backdrop-blur-sm" aria-hidden />
+          <div className="relative h-full w-[90vw] max-w-sm overflow-y-auto border-l border-upfleet-border bg-white p-6 shadow-premium" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setOpenOffer(null)} className="absolute right-4 top-4 text-upfleet-tertiary hover:text-upfleet-dark" aria-label="Close">
+              <X size={18} strokeWidth={2} />
+            </button>
+            <span className="inline-flex w-fit items-center rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-upfleet-secondary">{openOffer.category}</span>
+            <h3 className="mt-3 pr-6 font-heading text-[1.1875rem] font-semibold tracking-brand text-upfleet-dark">{openOffer.title}</h3>
+            <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">{openOffer.area}</p>
+            <p className="mt-4 text-[0.9375rem] leading-relaxed text-upfleet-body">{openOffer.detail}</p>
+            <div className="mt-5 rounded-xl border border-upfleet-border bg-upfleet-section-alt p-4">
+              <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-upfleet-tertiary">Posted by</p>
+              <p className="mt-0.5 font-heading text-[0.9375rem] font-semibold text-upfleet-dark">{openOffer.poster}</p>
+              <p className="text-[0.75rem] text-upfleet-secondary">{openOffer.posted}</p>
+            </div>
+            <a href={waWith(`Hi Rafiki, I'm interested in "${openOffer.title}" (${openOffer.area}). Can you connect me?`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
+              <MessageCircle size={15} strokeWidth={2} /> Connect via Rafiki
             </a>
             <p className="mt-2 text-center text-[0.6875rem] text-upfleet-tertiary">
-              No groups — just tell Rafiki and he connects you directly.
+              Rafiki shares the poster’s contact with you on WhatsApp.
             </p>
           </div>
         </div>
