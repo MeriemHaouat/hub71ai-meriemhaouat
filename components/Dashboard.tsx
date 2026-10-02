@@ -16,6 +16,7 @@ import Feed from "./Feed";
 import { browserSupabase } from "@/lib/supabase";
 import { REPORT_TYPES, TYPE_COLORS, TYPE_LABELS, type Report } from "@/lib/types";
 import listingsData from "@/data/listings.json";
+import communitiesData from "@/data/communities.json";
 
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
@@ -36,51 +37,21 @@ const HELP = [
   { icon: ShieldAlert, title: "Avoid the scams", body: "Newcomers flag scam numbers and bad landlords so you don't fall for them." },
 ];
 
+interface CommunityEvent {
+  when: string;
+  title: string;
+  where: string;
+}
 interface Community {
   emoji: string;
   name: string;
   note: string;
   members: number;
   blurb: string;
-  events: { when: string; title: string }[];
+  events: CommunityEvent[];
 }
 
-const COMMUNITIES: Community[] = [
-  {
-    emoji: "🚀", name: "Founders", note: "Building in Abu Dhabi", members: 128,
-    blurb: "Founders and early employees building startups out of Hub71 and ADGM.",
-    events: [
-      { when: "Thu 6:00 PM", title: "Founder coffee @ Hub71" },
-      { when: "Next Tue 7:00 PM", title: "Pitch night @ ADGM Square" },
-      { when: "Sat 10:00 AM", title: "Weekend build session @ Masdar City" },
-    ],
-  },
-  {
-    emoji: "👶", name: "Parents & toddlers", note: "Playgrounds, nurseries, tips", members: 203,
-    blurb: "Parents sharing nurseries, pediatricians, playdates and weekend plans.",
-    events: [
-      { when: "Sat 10:00 AM", title: "Playdate @ Umm Al Emarat Park" },
-      { when: "Sun 4:00 PM", title: "Nursery open day @ Khalifa City" },
-    ],
-  },
-  {
-    emoji: "🏃", name: "Runners", note: "Corniche morning crews", members: 176,
-    blurb: "Morning runners along the Corniche and Yas. All paces welcome.",
-    events: [
-      { when: "Daily 6:00 AM", title: "Corniche 5k crew" },
-      { when: "Fri 8:00 PM", title: "Yas Marina night run" },
-    ],
-  },
-  {
-    emoji: "📖", name: "Arabic learners", note: "Practice partners & classes", members: 94,
-    blurb: "Beginners to fluent, practicing Arabic together over coffee and classes.",
-    events: [
-      { when: "Wed 7:00 PM", title: "Conversation table @ Corniche cafe" },
-      { when: "Mon 6:30 PM", title: "Beginner class @ Al Maryah" },
-    ],
-  },
-];
-
+const COMMUNITIES = communitiesData as Community[];
 const OFFERS = (listingsData as any[]).slice(0, 8);
 
 export default function Dashboard() {
@@ -125,6 +96,22 @@ export default function Dashboard() {
 
   const legend = useMemo(() => REPORT_TYPES.filter((t) => t !== "other"), []);
 
+  const ticker = useMemo(() => {
+    const fromReports = reports.slice(0, 12).map((r) => ({
+      label: TYPE_LABELS[r.type] ?? "Tip",
+      text: r.detail,
+      area: r.area,
+      color: TYPE_COLORS[r.type] ?? TYPE_COLORS.other,
+    }));
+    const fromOffers = OFFERS.map((o) => ({
+      label: o.category,
+      text: o.title,
+      area: o.area,
+      color: TYPE_COLORS.other,
+    }));
+    return [...fromReports, ...fromOffers].slice(0, 18);
+  }, [reports]);
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -168,6 +155,30 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Live updates ticker */}
+      {ticker.length > 0 && (
+        <section className="border-b border-upfleet-border bg-white">
+          <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-5 lg:px-8">
+            <span className="flex shrink-0 items-center gap-1.5 py-2.5 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-upfleet-dark">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-upfleet-positive" />
+              Live updates
+            </span>
+            <div className="relative flex-1 overflow-hidden">
+              <div className="flex w-max animate-marquee gap-7 whitespace-nowrap py-2.5">
+                {[...ticker, ...ticker].map((it, i) => (
+                  <span key={i} className="inline-flex items-center gap-2 text-[0.75rem] text-upfleet-secondary">
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: it.color }} />
+                    <span className="font-semibold text-upfleet-dark">{it.label}</span>
+                    <span>{it.text}</span>
+                    <span className="text-upfleet-tertiary">· {it.area}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <main className="mx-auto max-w-[1400px] space-y-10 px-5 py-10 lg:px-8">
         {/* How Rafiki helps */}
@@ -284,15 +295,20 @@ export default function Dashboard() {
                 {openCommunity.events.map((e) => (
                   <li key={e.title} className="flex items-start gap-3 rounded-xl border border-upfleet-border bg-upfleet-section-alt px-3 py-2.5">
                     <span className="mt-0.5 shrink-0 rounded-md bg-upfleet-dark px-2 py-0.5 text-[0.625rem] font-semibold text-white">{e.when}</span>
-                    <span className="text-[0.8125rem] text-upfleet-body">{e.title}</span>
+                    <span className="text-[0.8125rem] text-upfleet-body">
+                      {e.title} <span className="text-upfleet-tertiary">@ {e.where}</span>
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <a href={waWith(`Hi Rafiki, I'd like to join the ${openCommunity.name} community in Abu Dhabi.`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
-              <MessageCircle size={15} strokeWidth={2} /> Join via WhatsApp
+            <a href={waWith(`Hi Rafiki, what's coming up in the ${openCommunity.name} community? I'd like to take part.`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
+              <MessageCircle size={15} strokeWidth={2} /> Ask Rafiki to join
             </a>
+            <p className="mt-2 text-center text-[0.6875rem] text-upfleet-tertiary">
+              No groups — just tell Rafiki and he connects you directly.
+            </p>
           </div>
         </div>
       )}

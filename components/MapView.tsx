@@ -43,6 +43,12 @@ export default function MapView({
     <MapContainer
       center={ABU_DHABI_CENTER}
       zoom={11}
+      minZoom={7}
+      maxBounds={[
+        [22.2, 51.0],
+        [26.5, 56.6],
+      ]}
+      maxBoundsViscosity={1.0}
       scrollWheelZoom
       className="h-full w-full"
     >

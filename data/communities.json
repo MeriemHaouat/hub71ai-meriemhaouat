@@ -1,0 +1,35 @@
+[
+  {
+    "emoji": "🚀", "name": "Founders", "note": "Building in Abu Dhabi", "members": 128,
+    "blurb": "Founders and early employees building startups out of Hub71 and ADGM.",
+    "events": [
+      { "when": "Thu 6:00 PM", "title": "Founder coffee", "where": "Hub71" },
+      { "when": "Next Tue 7:00 PM", "title": "Pitch night", "where": "ADGM Square" },
+      { "when": "Sat 10:00 AM", "title": "Weekend build session", "where": "Masdar City" }
+    ]
+  },
+  {
+    "emoji": "👶", "name": "Parents & toddlers", "note": "Playgrounds, nurseries, tips", "members": 203,
+    "blurb": "Parents sharing nurseries, pediatricians, playdates and weekend plans.",
+    "events": [
+      { "when": "Sat 10:00 AM", "title": "Playdate", "where": "Umm Al Emarat Park" },
+      { "when": "Sun 4:00 PM", "title": "Nursery open day", "where": "Khalifa City" }
+    ]
+  },
+  {
+    "emoji": "🏃", "name": "Runners", "note": "Corniche morning crews", "members": 176,
+    "blurb": "Morning runners along the Corniche and Yas. All paces welcome.",
+    "events": [
+      { "when": "Daily 6:00 AM", "title": "Corniche 5k crew", "where": "The Corniche" },
+      { "when": "Fri 8:00 PM", "title": "Yas Marina night run", "where": "Yas Marina" }
+    ]
+  },
+  {
+    "emoji": "📖", "name": "Arabic learners", "note": "Practice partners & classes", "members": 94,
+    "blurb": "Beginners to fluent, practicing Arabic together over coffee and classes.",
+    "events": [
+      { "when": "Wed 7:00 PM", "title": "Conversation table", "where": "Corniche cafe" },
+      { "when": "Mon 6:30 PM", "title": "Beginner class", "where": "Al Maryah" }
+    ]
+  }
+]

@@ -1,5 +1,6 @@
 import { REPORT_TYPES, type Extracted, type ReportType } from "./types";
 import listings from "../data/listings.json";
+import communities from "../data/communities.json";
 
 /**
  * Curated, authoritative "settling-in" knowledge for Abu Dhabi, with official
@@ -34,6 +35,15 @@ const LISTINGS_CATALOG = (listings as any[])
   })
   .join("\n");
 
+/** Upcoming community events (same source as the website) Rafiki can share. */
+const EVENTS_CATALOG = (communities as any[])
+  .flatMap((c) =>
+    (c.events || []).map(
+      (e: any) => `- [${c.name}] ${e.when} — ${e.title} @ ${e.where}`,
+    ),
+  )
+  .join("\n");
+
 export const SYSTEM = `You are Rafiki (رفيقي), a warm, real human-feeling companion for people in Abu Dhabi.
 Talk like a friendly local friend on WhatsApp: natural, warm, concise, first-name energy.
 Never sound like a bot or a FAQ. For EVERY message, decide the intent and call exactly ONE tool.
@@ -52,6 +62,13 @@ GOLDEN RULES:
   them to Abu Dhabi first, then help.
 • Identify people by their phone number (the chat). You may ask for their email if it
   helps connect them.
+• COMMUNITIES & EVENTS: there are NO WhatsApp groups. When someone asks what's
+  happening ("anything to do this weekend?", "any events?") or wants to join a
+  community (Founders, Parents, Runners, Arabic learners), tell them the upcoming
+  events from COMMUNITY EVENTS below (what people posted on the site). If they say
+  "I want to join X" or "sign me up for that run", warmly note it and tell them
+  you'll flag them to the organiser — do NOT send a group link, because there are
+  no groups; Rafiki connects people directly.
 
 WHICH TOOL:
 • "answer" → questions, help requests, "find me X", greetings, welcomes, connecting
@@ -70,7 +87,10 @@ Always reply in the SAME language the user wrote in (Arabic, English, Hindi, Urd
 ${KNOWLEDGE}
 
 COMMUNITY LISTINGS (your network — connect newcomers to these people by name + phone):
-${LISTINGS_CATALOG}`;
+${LISTINGS_CATALOG}
+
+COMMUNITY EVENTS (posted on the Rafiki site — share these when asked what's happening):
+${EVENTS_CATALOG}`;
 
 /** Provider-agnostic tool parameter schemas. */
 export const ANSWER_PARAMS = {

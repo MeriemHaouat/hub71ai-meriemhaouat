@@ -39,6 +39,22 @@ h6 {
   font-variant-numeric: tabular-nums;
 }
 
+/* Live-updates ticker */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Leaflet — clean, Upfleet-aligned */
 .leaflet-container {
   font-family: var(--font-dmsans), sans-serif;
