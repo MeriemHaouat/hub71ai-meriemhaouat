@@ -1,0 +1,44 @@
+[
+  {
+    "type": "rent",
+    "area": "Al Reem Island",
+    "detail": "1BR in Marina Square, paid AED 72,000/yr (4 cheques). Asking was 80k — negotiable.",
+    "lat": 24.4986,
+    "lng": 54.4012
+  },
+  {
+    "type": "rent",
+    "area": "Khalifa City",
+    "detail": "Studio, AED 45,000/yr incl. 1 month free. Quiet, good for first arrivals.",
+    "lat": 24.4219,
+    "lng": 54.5783
+  },
+  {
+    "type": "scam",
+    "area": "Al Reem Island",
+    "detail": "Caller claiming to be 'bank security' asking for OTP. Do NOT share. Report to your bank.",
+    "lat": 24.5010,
+    "lng": 54.3995
+  },
+  {
+    "type": "landlord",
+    "area": "Al Raha Beach",
+    "detail": "Responsive landlord, returned full deposit within a week. Recommended.",
+    "lat": 24.4539,
+    "lng": 54.6069
+  },
+  {
+    "type": "clinic",
+    "area": "Mussafah",
+    "detail": "Typing centre + clinic for the medical fitness test — fast, walk-ins before 10am.",
+    "lat": 24.3569,
+    "lng": 54.5028
+  },
+  {
+    "type": "clinic",
+    "area": "Al Danah",
+    "detail": "Good family clinic near the Corniche, accepts Daman insurance.",
+    "lat": 24.4869,
+    "lng": 54.3617
+  }
+]
