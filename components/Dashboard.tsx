@@ -54,14 +54,6 @@ interface Community {
 const COMMUNITIES = communitiesData as Community[];
 const OFFERS = (listingsData as any[]).slice(0, 8);
 
-const ASK_EXAMPLES = [
-  "I have an apartment I want to rent out",
-  "I'm selling my car — can you post it?",
-  "Find me a flat in Al Saadiyat",
-  "How do I get my Emirates ID?",
-  "Anything happening this weekend?",
-];
-
 export default function Dashboard() {
   const [reports, setReports] = useState<Report[]>([]);
   const [newestId, setNewestId] = useState<string | null>(null);
@@ -69,6 +61,7 @@ export default function Dashboard() {
   const [openCommunity, setOpenCommunity] = useState<Community | null>(null);
   const [openOffer, setOpenOffer] = useState<any | null>(null);
   const [joined, setJoined] = useState<Record<string, boolean>>({});
+  const [interested, setInterested] = useState<Record<string, boolean>>({});
 
   const addReport = useCallback((r: Report) => {
     setReports((prev) => (prev.some((x) => x.id === r.id) ? prev : [r, ...prev]));
@@ -215,24 +208,18 @@ export default function Dashboard() {
             <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
               Talk to Rafiki
             </h2>
-            <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">
-              Point your camera at the code to open WhatsApp, or message{" "}
+            <p className="mt-1.5 text-[0.8125rem] text-upfleet-secondary">
+              Scan the code to open WhatsApp, or message{" "}
               <span className="font-medium text-upfleet-dark">{WHATSAPP_DISPLAY}</span>.
-              Anyone can scan and start chatting right away.
             </p>
-            <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
-              {ASK_EXAMPLES.map((ex) => (
-                <a
-                  key={ex}
-                  href={waWith(ex)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full border border-upfleet-border bg-upfleet-section-alt px-3 py-1.5 text-[0.75rem] text-upfleet-secondary tracking-brand transition-colors hover:border-upfleet-dark hover:text-upfleet-dark"
-                >
-                  “{ex}”
-                </a>
-              ))}
-            </div>
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-all duration-200 hover:-translate-y-px hover:bg-[#1a1d24] hover:shadow-premium"
+            >
+              <MessageCircle size={15} strokeWidth={2} /> Chat with Rafiki
+            </a>
           </div>
         </section>
 
@@ -394,12 +381,25 @@ export default function Dashboard() {
               <p className="mt-0.5 font-heading text-[0.9375rem] font-semibold text-upfleet-dark">{openOffer.poster}</p>
               <p className="text-[0.75rem] text-upfleet-secondary">{openOffer.posted}</p>
             </div>
-            <a href={waWith(`Hi Rafiki, I'm interested in "${openOffer.title}" (${openOffer.area}). Can you connect me?`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
+            <button
+              onClick={() => setInterested((s) => ({ ...s, [openOffer.id]: true }))}
+              disabled={interested[openOffer.id]}
+              className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] px-5 py-2.5 text-[0.8125rem] font-medium tracking-brand transition-colors ${
+                interested[openOffer.id]
+                  ? "bg-upfleet-positive/10 text-upfleet-positive"
+                  : "bg-upfleet-dark text-white hover:bg-[#1a1d24]"
+              }`}
+            >
+              {interested[openOffer.id] ? "You're interested ✓" : "I'm interested"}
+            </button>
+            {interested[openOffer.id] && (
+              <p className="mt-2 text-center text-[0.6875rem] text-upfleet-positive">
+                Rafiki will reach out to connect you with {openOffer.poster}.
+              </p>
+            )}
+            <a href={waWith(`Hi Rafiki, I'm interested in "${openOffer.title}" (${openOffer.area}). Can you connect me?`)} target="_blank" rel="noreferrer" className="mt-2.5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-upfleet-border bg-white px-5 py-2.5 text-[0.8125rem] font-medium text-upfleet-dark tracking-brand transition-colors hover:border-upfleet-dark hover:bg-upfleet-section-alt">
               <MessageCircle size={15} strokeWidth={2} /> Connect via Rafiki
             </a>
-            <p className="mt-2 text-center text-[0.6875rem] text-upfleet-tertiary">
-              Rafiki shares the poster’s contact with you on WhatsApp.
-            </p>
           </div>
         </div>
       )}
