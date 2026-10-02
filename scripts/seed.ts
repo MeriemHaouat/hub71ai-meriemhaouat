@@ -33,13 +33,17 @@ const rows = (seed as any[]).map((r) => {
   };
 });
 
-const { error, count } = await db
-  .from("reports")
-  .insert(rows, { count: "exact" });
+async function main() {
+  const { error, count } = await db
+    .from("reports")
+    .insert(rows, { count: "exact" });
 
-if (error) {
-  console.error("Seed failed:", error.message);
-  process.exit(1);
+  if (error) {
+    console.error("Seed failed:", error.message);
+    process.exit(1);
+  }
+
+  console.log(`Seeded ${count ?? rows.length} reports.`);
 }
 
-console.log(`Seeded ${count ?? rows.length} reports.`);
+main();

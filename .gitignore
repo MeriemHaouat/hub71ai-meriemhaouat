@@ -13,3 +13,7 @@ out/
 .DS_Store
 *.log
 .vercel
+
+# supabase local
+supabase/.temp/
+supabase/.branches/
