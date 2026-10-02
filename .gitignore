@@ -17,3 +17,5 @@ out/
 # supabase local
 supabase/.temp/
 supabase/.branches/
+.env*
+.whapi-webhook-backup.json
