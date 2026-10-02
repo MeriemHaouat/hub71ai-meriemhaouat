@@ -181,6 +181,32 @@ export default function Dashboard() {
       )}
 
       <main className="mx-auto max-w-[1400px] space-y-10 px-5 py-10 lg:px-8">
+        {/* Scan to chat */}
+        <section className="flex flex-col items-center gap-5 rounded-2xl border border-upfleet-border bg-white p-5 shadow-card sm:flex-row sm:p-6">
+          <img
+            src="/rafiki-qr.png"
+            alt="Scan to chat with Rafiki on WhatsApp"
+            className="h-28 w-28 shrink-0 rounded-xl border border-upfleet-border"
+          />
+          <div className="text-center sm:text-left">
+            <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
+              Try Rafiki now — scan to chat
+            </h2>
+            <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">
+              Point your camera at the code to open WhatsApp, or message{" "}
+              <span className="font-medium text-upfleet-dark">{WHATSAPP_DISPLAY}</span>.
+            </p>
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-all duration-200 hover:-translate-y-px hover:bg-[#1a1d24] hover:shadow-premium"
+            >
+              <MessageCircle size={15} strokeWidth={2} /> Chat with Rafiki
+            </a>
+          </div>
+        </section>
+
         {/* How Rafiki helps */}
         <section className="grid gap-4 sm:grid-cols-3">
           {HELP.map(({ icon: Icon, title, body }) => (
