@@ -7,7 +7,7 @@ import {
   LISTING_DESC,
   normalizeListing,
 } from "./brain";
-import type { BrainResult } from "./types";
+import type { BrainResult, Turn } from "./types";
 
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
@@ -17,12 +17,13 @@ function getClient(): OpenAI {
   return client;
 }
 
-export async function runBrain(message: string): Promise<BrainResult> {
+export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
   const res = await getClient().chat.completions.create({
     model: MODEL,
     temperature: 0.3,
     messages: [
       { role: "system", content: SYSTEM },
+      ...history.map((h) => ({ role: h.role, content: h.content })),
       { role: "user", content: message },
     ],
     tools: [

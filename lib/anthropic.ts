@@ -7,7 +7,7 @@ import {
   LISTING_DESC,
   normalizeListing,
 } from "./brain";
-import type { BrainResult } from "./types";
+import type { BrainResult, Turn } from "./types";
 
 // Default to Opus 4.8. Set ANTHROPIC_MODEL=claude-haiku-4-5 for faster replies.
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
@@ -18,7 +18,7 @@ function getClient(): Anthropic {
   return client;
 }
 
-export async function runBrain(message: string): Promise<BrainResult> {
+export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
   const res = await getClient().messages.create({
     model: MODEL,
     max_tokens: 1024,
@@ -28,7 +28,10 @@ export async function runBrain(message: string): Promise<BrainResult> {
       { name: "save_listing", description: LISTING_DESC, input_schema: LISTING_PARAMS as any },
     ],
     tool_choice: { type: "auto" },
-    messages: [{ role: "user", content: message }],
+    messages: [
+      ...history.map((h) => ({ role: h.role, content: h.content })),
+      { role: "user", content: message },
+    ],
   });
 
   const block = res.content.find((b) => b.type === "tool_use");

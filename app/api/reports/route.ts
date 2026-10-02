@@ -46,8 +46,9 @@ export async function GET() {
 // POST /api/reports — web composer: simulate a WhatsApp message end-to-end.
 export async function POST(req: NextRequest) {
   let text: string | undefined;
+  let conversationId: string | undefined;
   try {
-    ({ text } = await req.json());
+    ({ text, conversationId } = await req.json());
   } catch {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { kind, reply, report } = await handleMessage(text.trim(), "web");
+    const { kind, reply, report } = await handleMessage(text.trim(), "web", conversationId);
     return NextResponse.json({ kind, reply, report });
   } catch (err: any) {
     console.error("[api/reports] handle failed:", err);

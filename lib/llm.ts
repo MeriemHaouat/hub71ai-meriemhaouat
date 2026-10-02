@@ -1,4 +1,4 @@
-import type { BrainResult } from "./types";
+import type { BrainResult, Turn } from "./types";
 import { runBrain as runOpenAI } from "./openai";
 import { runBrain as runClaude } from "./anthropic";
 
@@ -9,6 +9,8 @@ const PROVIDER = (process.env.LLM_PROVIDER || "openai").toLowerCase();
 export const activeProvider =
   PROVIDER === "claude" || PROVIDER === "anthropic" ? "claude" : "openai";
 
-export async function runBrain(message: string): Promise<BrainResult> {
-  return activeProvider === "claude" ? runClaude(message) : runOpenAI(message);
+export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
+  return activeProvider === "claude"
+    ? runClaude(message, history)
+    : runOpenAI(message, history);
 }

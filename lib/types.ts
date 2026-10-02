@@ -45,6 +45,12 @@ export interface Extracted {
   reply: string;
 }
 
+/** One prior turn in a WhatsApp conversation (for Rafiki's memory). */
+export interface Turn {
+  role: "user" | "assistant";
+  content: string;
+}
+
 /**
  * Rafiki's decision for one incoming message:
  * - "answer"  → a question/help request; reply only, nothing saved.
