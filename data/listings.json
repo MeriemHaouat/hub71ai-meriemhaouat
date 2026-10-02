@@ -1,0 +1,92 @@
+[
+  {
+    "id": "L01", "category": "apartment", "area": "Al Saadiyat",
+    "title": "2BR apartment, Saadiyat, sea view",
+    "detail": "Spacious 2-bedroom in Mamsha Al Saadiyat, 95,000/yr, 4 cheques, available now. Walk to the beach.",
+    "poster": "Layla Haddad", "phone": "+971 50 118 2204", "email": "layla.haddad@example.ae", "posted": "yesterday"
+  },
+  {
+    "id": "L02", "category": "apartment", "area": "Al Saadiyat",
+    "title": "Studio, Saadiyat, furnished",
+    "detail": "Furnished studio near NYU Abu Dhabi, 62,000/yr incl. chiller, perfect for a single professional.",
+    "poster": "Omar Farouk", "phone": "+971 55 904 7781", "posted": "2 days ago"
+  },
+  {
+    "id": "L03", "category": "apartment", "area": "Al Reem Island",
+    "title": "1BR, Al Reem, Marina Square",
+    "detail": "1-bedroom in Marina Square, 72,000/yr, gym + pool, metro of buses nearby.",
+    "poster": "Priya Nair", "phone": "+971 52 663 1190", "email": "priya.n@example.ae", "posted": "today"
+  },
+  {
+    "id": "L04", "category": "apartment", "area": "Khalifa City",
+    "title": "Studio, Khalifa City, 1 month free",
+    "detail": "Quiet studio, 45,000/yr with 1 month free, great for first arrivals, family compound.",
+    "poster": "Hassan Ali", "phone": "+971 56 220 8845", "posted": "3 days ago"
+  },
+  {
+    "id": "L05", "category": "office", "area": "Al Maryah Island",
+    "title": "Office to rent, ADGM, Al Maryah",
+    "detail": "Fitted 60 sqm office in ADGM Square, ready for a licence address, 110,000/yr, flexible terms.",
+    "poster": "Nadia Khoury", "phone": "+971 50 771 3360", "email": "nadia@maryah-offices.example.ae", "posted": "yesterday"
+  },
+  {
+    "id": "L06", "category": "office", "area": "Masdar City",
+    "title": "Co-working desks, Masdar City",
+    "detail": "Dedicated desks from 1,500/month at a startup hub, includes meeting rooms + trade-licence support.",
+    "poster": "Masdar Hub (Yousef)", "phone": "+971 52 410 9902", "posted": "today"
+  },
+  {
+    "id": "L07", "category": "house-for-sale", "area": "Yas Island",
+    "title": "Townhouse for sale, Yas Island",
+    "detail": "3BR townhouse in West Yas, 2.65M, single row, close to Yas Mall. Motivated seller.",
+    "poster": "Grace Mensah", "phone": "+971 54 338 7012", "email": "grace.m@example.ae", "posted": "4 days ago"
+  },
+  {
+    "id": "L08", "category": "villa", "area": "Al Raha Beach",
+    "title": "Villa to rent, Al Raha Gardens",
+    "detail": "4BR villa with garden, 185,000/yr, family-friendly, near Raha International School.",
+    "poster": "Ahmed Saleh", "phone": "+971 50 556 4423", "posted": "2 days ago"
+  },
+  {
+    "id": "L09", "category": "service", "area": "Abu Dhabi",
+    "title": "Trusted moving company",
+    "detail": "Licensed movers, flat move from 450 AED, packing included, newcomer discount 15%.",
+    "poster": "SwiftMove (Daniel)", "phone": "+971 55 782 1109", "email": "book@swiftmove.example.ae", "posted": "today"
+  },
+  {
+    "id": "L10", "category": "service", "area": "Khalifa City",
+    "title": "Experienced nanny available",
+    "detail": "Full-time nanny, 8 yrs experience, references, available from next month. Lives in Khalifa City.",
+    "poster": "Maria Santos", "phone": "+971 56 907 2218", "posted": "yesterday"
+  },
+  {
+    "id": "L11", "category": "service", "area": "Abu Dhabi",
+    "title": "Arabic tutor for beginners",
+    "detail": "Private Arabic lessons for newcomers, 120 AED/hr, online or in-person around the Corniche.",
+    "poster": "Fatima Zahra", "phone": "+971 52 115 6677", "email": "fatima.tutor@example.ae", "posted": "3 days ago"
+  },
+  {
+    "id": "L12", "category": "car", "area": "Abu Dhabi",
+    "title": "Car for sale — 2021 Nissan Kicks",
+    "detail": "45,000 km, agency maintained, 48,000 AED, transfer help included. Great first car.",
+    "poster": "Kingsley O.", "phone": "+971 50 334 8890", "posted": "yesterday"
+  },
+  {
+    "id": "L13", "category": "furniture", "area": "Al Reem Island",
+    "title": "Moving out — furniture bundle",
+    "detail": "Sofa, bed, fridge, washing machine — whole bundle 2,200 AED, must go this weekend, Al Reem.",
+    "poster": "Elena Petrova", "phone": "+971 55 661 4420", "posted": "today"
+  },
+  {
+    "id": "L14", "category": "business-offer", "area": "Abu Dhabi",
+    "title": "Business setup — free consultation",
+    "detail": "ADGM/mainland company formation, first consultation free, newcomer package 20% off this month.",
+    "poster": "Setup Partners (Rania)", "phone": "+971 50 998 2255", "email": "hello@setuppartners.example.ae", "posted": "2 days ago"
+  },
+  {
+    "id": "L15", "category": "business-offer", "area": "Al Maryah Island",
+    "title": "Gym membership transfer",
+    "detail": "6 months left on a premium gym membership at Al Maryah, transfer for 1,400 AED (worth 2,600).",
+    "poster": "Tom Becker", "phone": "+971 52 447 3301", "posted": "yesterday"
+  }
+]

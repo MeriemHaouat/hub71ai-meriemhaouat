@@ -9,10 +9,13 @@ import {
   ShieldAlert,
   ClipboardList,
   Users,
+  CalendarDays,
+  X,
 } from "lucide-react";
 import Feed from "./Feed";
 import { browserSupabase } from "@/lib/supabase";
 import { REPORT_TYPES, TYPE_COLORS, TYPE_LABELS, type Report } from "@/lib/types";
+import listingsData from "@/data/listings.json";
 
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
@@ -25,36 +28,66 @@ const MapView = dynamic(() => import("./MapView"), {
 
 const WHATSAPP_DISPLAY = "+971 58 572 6739";
 const WHATSAPP_LINK = "https://wa.me/971585726739";
+const waWith = (text: string) => `${WHATSAPP_LINK}?text=${encodeURIComponent(text)}`;
 
 const HELP = [
+  { icon: ClipboardList, title: "Ask how to settle in", body: "Emirates ID, Tawtheeq tenancy, bank, SIM, licence — step by step, with official sources." },
+  { icon: Users, title: "Get connected to people", body: "Looking for a flat, office, car or a nanny? Rafiki connects you to real people who posted offers." },
+  { icon: ShieldAlert, title: "Avoid the scams", body: "Newcomers flag scam numbers and bad landlords so you don't fall for them." },
+];
+
+interface Community {
+  emoji: string;
+  name: string;
+  note: string;
+  members: number;
+  blurb: string;
+  events: { when: string; title: string }[];
+}
+
+const COMMUNITIES: Community[] = [
   {
-    icon: ClipboardList,
-    title: "Ask how to settle in",
-    body: "Emirates ID, Tawtheeq tenancy, bank, SIM, licence — step by step, with official sources.",
+    emoji: "🚀", name: "Founders", note: "Building in Abu Dhabi", members: 128,
+    blurb: "Founders and early employees building startups out of Hub71 and ADGM.",
+    events: [
+      { when: "Thu 6:00 PM", title: "Founder coffee @ Hub71" },
+      { when: "Next Tue 7:00 PM", title: "Pitch night @ ADGM Square" },
+      { when: "Sat 10:00 AM", title: "Weekend build session @ Masdar City" },
+    ],
   },
   {
-    icon: MapPin,
-    title: "See real local data",
-    body: "Rents people actually paid, trusted landlords, clinics — on a live community map.",
+    emoji: "👶", name: "Parents & toddlers", note: "Playgrounds, nurseries, tips", members: 203,
+    blurb: "Parents sharing nurseries, pediatricians, playdates and weekend plans.",
+    events: [
+      { when: "Sat 10:00 AM", title: "Playdate @ Umm Al Emarat Park" },
+      { when: "Sun 4:00 PM", title: "Nursery open day @ Khalifa City" },
+    ],
   },
   {
-    icon: ShieldAlert,
-    title: "Avoid the scams",
-    body: "Newcomers flag scam numbers and bad landlords so you don't fall for them.",
+    emoji: "🏃", name: "Runners", note: "Corniche morning crews", members: 176,
+    blurb: "Morning runners along the Corniche and Yas. All paces welcome.",
+    events: [
+      { when: "Daily 6:00 AM", title: "Corniche 5k crew" },
+      { when: "Fri 8:00 PM", title: "Yas Marina night run" },
+    ],
+  },
+  {
+    emoji: "📖", name: "Arabic learners", note: "Practice partners & classes", members: 94,
+    blurb: "Beginners to fluent, practicing Arabic together over coffee and classes.",
+    events: [
+      { when: "Wed 7:00 PM", title: "Conversation table @ Corniche cafe" },
+      { when: "Mon 6:30 PM", title: "Beginner class @ Al Maryah" },
+    ],
   },
 ];
 
-const COMMUNITIES = [
-  { emoji: "🚀", name: "Founders", note: "Building in Abu Dhabi" },
-  { emoji: "👶", name: "Parents & toddlers", note: "Playgrounds, nurseries, tips" },
-  { emoji: "🏃", name: "Runners", note: "Corniche morning crews" },
-  { emoji: "📖", name: "Arabic learners", note: "Practice partners & classes" },
-];
+const OFFERS = (listingsData as any[]).slice(0, 8);
 
 export default function Dashboard() {
   const [reports, setReports] = useState<Report[]>([]);
   const [newestId, setNewestId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
+  const [openCommunity, setOpenCommunity] = useState<Community | null>(null);
 
   const addReport = useCallback((r: Report) => {
     setReports((prev) => (prev.some((x) => x.id === r.id) ? prev : [r, ...prev]));
@@ -97,24 +130,15 @@ export default function Dashboard() {
       {/* Header */}
       <header className="sticky top-0 z-[1100] flex h-14 items-center justify-between border-b border-upfleet-border bg-white/80 px-5 backdrop-blur-xl lg:px-8">
         <div className="flex items-baseline gap-2.5">
-          <span className="font-heading text-[1.25rem] font-extrabold italic tracking-brand text-upfleet-dark">
-            RAFIKI
-          </span>
+          <span className="font-heading text-[1.25rem] font-extrabold italic tracking-brand text-upfleet-dark">RAFIKI</span>
           <span className="font-heading text-[1rem] text-upfleet-secondary">رفيقي</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden items-center gap-1.5 text-[0.75rem] text-upfleet-secondary sm:inline-flex">
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${live ? "animate-pulse bg-upfleet-positive" : "bg-upfleet-tertiary"}`}
-            />
+            <span className={`h-1.5 w-1.5 rounded-full ${live ? "animate-pulse bg-upfleet-positive" : "bg-upfleet-tertiary"}`} />
             {live ? "live" : "connecting"}
           </span>
-          <a
-            href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-upfleet-dark px-3.5 py-1.5 text-[0.75rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]"
-          >
+          <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-upfleet-dark px-3.5 py-1.5 text-[0.75rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
             <MessageCircle size={13} strokeWidth={2} /> {WHATSAPP_DISPLAY}
           </a>
         </div>
@@ -122,43 +146,24 @@ export default function Dashboard() {
 
       {/* Full-bleed hero */}
       <section className="relative w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/abu-dhabi-skyline.png)" }}
-          aria-hidden
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(100deg, rgba(11,13,16,0.92) 0%, rgba(11,13,16,0.70) 40%, rgba(11,13,16,0.18) 100%)",
-          }}
-          aria-hidden
-        />
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/abu-dhabi-skyline.png)" }} aria-hidden />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(11,13,16,0.92) 0%, rgba(11,13,16,0.70) 40%, rgba(11,13,16,0.18) 100%)" }} aria-hidden />
         <div className="relative mx-auto max-w-[1400px] px-5 py-14 lg:px-8 lg:py-20">
-          <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-upfleet-yellow">
-            Welcome to Abu Dhabi
-          </span>
+          <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-upfleet-yellow">Welcome to Abu Dhabi</span>
           <h1 className="mt-3 max-w-2xl font-heading text-[2.1rem] font-semibold leading-[1.08] tracking-brand-tight text-white lg:text-[3rem]">
             Your companion for moving to, settling in, and building a future here.
           </h1>
           <p className="mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-white/80 lg:text-[1.0625rem]">
-            Message Rafiki on WhatsApp. He walks you through the official steps —
-            Emirates ID, tenancy, bank, licence — and the community fills in what
-            only locals know: real rents, trusted landlords, the scams to dodge.
+            Message Rafiki on WhatsApp. He walks you through the official steps, and
+            connects you to a real community network — people with apartments, offices,
+            cars and services to offer, right now.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-[10px] bg-white px-5 py-3 text-[0.875rem] font-semibold text-upfleet-dark tracking-brand transition-all duration-200 hover:-translate-y-px hover:shadow-premium"
-            >
+            <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-[10px] bg-white px-5 py-3 text-[0.875rem] font-semibold text-upfleet-dark tracking-brand transition-all duration-200 hover:-translate-y-px hover:shadow-premium">
               <MessageCircle size={16} strokeWidth={2} /> Chat with Rafiki on WhatsApp
             </a>
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-2 text-[0.75rem] font-medium text-white backdrop-blur">
-              <Sparkles size={14} strokeWidth={1.75} className="text-upfleet-yellow" />
-              Built by newcomers, for the next one
+              <Sparkles size={14} strokeWidth={1.75} className="text-upfleet-yellow" /> Built by newcomers, for the next one
             </span>
           </div>
         </div>
@@ -168,17 +173,10 @@ export default function Dashboard() {
         {/* How Rafiki helps */}
         <section className="grid gap-4 sm:grid-cols-3">
           {HELP.map(({ icon: Icon, title, body }) => (
-            <div
-              key={title}
-              className="rounded-2xl border border-upfleet-border bg-white p-5 shadow-card"
-            >
+            <div key={title} className="rounded-2xl border border-upfleet-border bg-white p-5 shadow-card">
               <Icon size={20} strokeWidth={1.75} className="text-upfleet-dark" />
-              <h3 className="mt-3 font-heading text-[0.9375rem] font-semibold tracking-brand text-upfleet-dark">
-                {title}
-              </h3>
-              <p className="mt-1.5 text-[0.8125rem] leading-snug text-upfleet-secondary">
-                {body}
-              </p>
+              <h3 className="mt-3 font-heading text-[0.9375rem] font-semibold tracking-brand text-upfleet-dark">{title}</h3>
+              <p className="mt-1.5 text-[0.8125rem] leading-snug text-upfleet-secondary">{body}</p>
             </div>
           ))}
         </section>
@@ -190,18 +188,12 @@ export default function Dashboard() {
               <div className="flex items-center justify-between border-b border-upfleet-border px-5 py-3.5">
                 <div className="flex items-center gap-2">
                   <MapPin size={18} strokeWidth={1.75} className="text-upfleet-dark" />
-                  <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
-                    Living map of Abu Dhabi
-                  </h2>
+                  <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">Living map of Abu Dhabi</h2>
                 </div>
                 <div className="hidden flex-wrap gap-x-3 gap-y-1 sm:flex">
                   {legend.map((t) => (
-                    <span
-                      key={t}
-                      className="inline-flex items-center gap-1.5 text-[0.6875rem] text-upfleet-secondary"
-                    >
-                      <span className="h-2 w-2 rounded-full" style={{ background: TYPE_COLORS[t] }} />
-                      {TYPE_LABELS[t]}
+                    <span key={t} className="inline-flex items-center gap-1.5 text-[0.6875rem] text-upfleet-secondary">
+                      <span className="h-2 w-2 rounded-full" style={{ background: TYPE_COLORS[t] }} /> {TYPE_LABELS[t]}
                     </span>
                   ))}
                 </div>
@@ -211,16 +203,11 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
           <div className="lg:col-span-4">
             <div className="rounded-2xl border border-upfleet-border bg-white p-5 shadow-card lg:p-6">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
-                  What the community shared
-                </h2>
-                <span className="rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.6875rem] font-semibold text-upfleet-secondary tabular-nums">
-                  {reports.length}
-                </span>
+                <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">What the community shared</h2>
+                <span className="rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.6875rem] font-semibold text-upfleet-secondary tabular-nums">{reports.length}</span>
               </div>
               <div className="max-h-[520px] overflow-y-auto pr-1">
                 <Feed reports={reports} newestId={newestId} />
@@ -229,35 +216,42 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* Community offers (the unique dataset) */}
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Sparkles size={18} strokeWidth={1.75} className="text-upfleet-dark" />
+            <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">Latest community offers</h2>
+            <span className="text-[0.75rem] text-upfleet-tertiary">Rafiki connects you to the poster on WhatsApp</span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {OFFERS.map((o) => (
+              <div key={o.id} className="flex flex-col rounded-2xl border border-upfleet-border bg-white p-4 shadow-card">
+                <span className="inline-flex w-fit items-center rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-upfleet-secondary">{o.category}</span>
+                <h3 className="mt-2 font-heading text-[0.875rem] font-semibold tracking-brand text-upfleet-dark">{o.title}</h3>
+                <p className="mt-1 line-clamp-2 text-[0.75rem] leading-snug text-upfleet-secondary">{o.detail}</p>
+                <p className="mt-2 text-[0.6875rem] text-upfleet-tertiary">{o.poster} · {o.posted}</p>
+                <a href={waWith(`Hi Rafiki, I'm interested in "${o.title}" (${o.area}). Can you connect me?`)} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[0.75rem] font-medium text-upfleet-blue">
+                  Connect via Rafiki →
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Communities */}
         <section>
           <div className="mb-4 flex items-center gap-2">
             <Users size={18} strokeWidth={1.75} className="text-upfleet-dark" />
-            <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">
-              Find your people
-            </h2>
-            <span className="rounded-full bg-upfleet-yellow/20 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-upfleet-dark">
-              Coming soon
-            </span>
+            <h2 className="font-heading text-[1.0625rem] font-semibold tracking-brand text-upfleet-dark">Find your people</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {COMMUNITIES.map((c) => (
-              <a
-                key={c.name}
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noreferrer"
-                className="group rounded-2xl border border-upfleet-border bg-white p-5 shadow-card transition-all hover:-translate-y-px hover:shadow-card-hover"
-              >
+              <button key={c.name} onClick={() => setOpenCommunity(c)} className="group rounded-2xl border border-upfleet-border bg-white p-5 text-left shadow-card transition-all hover:-translate-y-px hover:shadow-card-hover">
                 <div className="text-2xl">{c.emoji}</div>
-                <h3 className="mt-3 font-heading text-[0.9375rem] font-semibold tracking-brand text-upfleet-dark">
-                  {c.name}
-                </h3>
+                <h3 className="mt-3 font-heading text-[0.9375rem] font-semibold tracking-brand text-upfleet-dark">{c.name}</h3>
                 <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">{c.note}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-[0.75rem] font-medium text-upfleet-blue">
-                  Join via WhatsApp →
-                </span>
-              </a>
+                <p className="mt-3 text-[0.75rem] font-medium text-upfleet-blue">{c.members} members · see inside →</p>
+              </button>
             ))}
           </div>
         </section>
@@ -267,6 +261,41 @@ export default function Dashboard() {
           <span className="font-medium text-upfleet-secondary">{WHATSAPP_DISPLAY}</span>
         </footer>
       </main>
+
+      {/* Community modal */}
+      {openCommunity && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4" onClick={() => setOpenCommunity(null)}>
+          <div className="absolute inset-0 bg-upfleet-dark/50 backdrop-blur-sm" aria-hidden />
+          <div className="relative w-full max-w-md rounded-2xl border border-upfleet-border bg-white p-6 shadow-premium" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setOpenCommunity(null)} className="absolute right-4 top-4 text-upfleet-tertiary hover:text-upfleet-dark" aria-label="Close">
+              <X size={18} strokeWidth={2} />
+            </button>
+            <div className="text-3xl">{openCommunity.emoji}</div>
+            <h3 className="mt-3 font-heading text-[1.25rem] font-semibold tracking-brand text-upfleet-dark">{openCommunity.name}</h3>
+            <p className="mt-1 text-[0.8125rem] text-upfleet-secondary">{openCommunity.blurb}</p>
+            <p className="mt-2 text-[0.75rem] font-medium text-upfleet-blue">{openCommunity.members} members</p>
+
+            <div className="mt-5">
+              <div className="mb-2 flex items-center gap-2">
+                <CalendarDays size={16} strokeWidth={1.75} className="text-upfleet-dark" />
+                <h4 className="font-heading text-[0.875rem] font-semibold tracking-brand text-upfleet-dark">Upcoming</h4>
+              </div>
+              <ul className="space-y-2">
+                {openCommunity.events.map((e) => (
+                  <li key={e.title} className="flex items-start gap-3 rounded-xl border border-upfleet-border bg-upfleet-section-alt px-3 py-2.5">
+                    <span className="mt-0.5 shrink-0 rounded-md bg-upfleet-dark px-2 py-0.5 text-[0.625rem] font-semibold text-white">{e.when}</span>
+                    <span className="text-[0.8125rem] text-upfleet-body">{e.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <a href={waWith(`Hi Rafiki, I'd like to join the ${openCommunity.name} community in Abu Dhabi.`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 text-[0.8125rem] font-medium text-white tracking-brand transition-colors hover:bg-[#1a1d24]">
+              <MessageCircle size={15} strokeWidth={2} /> Join via WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
