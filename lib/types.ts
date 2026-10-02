@@ -32,6 +32,7 @@ export interface Report {
   lat: number;
   lng: number;
   source: string;
+  contact?: string | null;
   created_at: string;
 }
 

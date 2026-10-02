@@ -35,7 +35,31 @@ export async function handleMessage(
     history = (data ?? []).reverse().map((r: any) => ({ role: r.role, content: r.content }));
   }
 
-  const result = await runBrain(text, history);
+  // Give Rafiki the LIVE community posts (posted via WhatsApp), so he can connect
+  // people to listings that aren't in the static seed catalog.
+  let extraContext = "";
+  if (db) {
+    const { data: recent } = await db
+      .from("reports")
+      .select("type,area,detail,contact")
+      .order("created_at", { ascending: false })
+      .limit(40);
+    if (recent && recent.length) {
+      const lines = recent
+        .map(
+          (r: any) =>
+            `- [${r.type} · ${r.area}] ${r.detail}${r.contact ? ` — contact ${r.contact}` : ""}`,
+        )
+        .join("\n");
+      extraContext =
+        "RECENT COMMUNITY POSTS (live, shared by people on WhatsApp — REAL and current). " +
+        "When one matches what the user wants, connect them and share the contact if it's listed. " +
+        "Rentals/offers are the ones with a contact; scam/landlord/clinic are safety tips.\n" +
+        lines;
+    }
+  }
+
+  const result = await runBrain(text, history, extraContext);
 
   // Save this turn to memory (user message + Rafiki's reply).
   if (conversationId && db) {
@@ -55,7 +79,15 @@ export async function handleMessage(
       ? [ex.lat, ex.lng]
       : coordsForArea(ex.area);
 
-  const row = { type: ex.type, area: ex.area, detail: ex.detail, lat, lng, source };
+  const row = {
+    type: ex.type,
+    area: ex.area,
+    detail: ex.detail,
+    lat,
+    lng,
+    source,
+    contact: source === "whatsapp" ? conversationId ?? null : null,
+  };
 
   if (!db) {
     const report: Report = {

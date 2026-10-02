@@ -18,11 +18,15 @@ function getClient(): Anthropic {
   return client;
 }
 
-export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
+export async function runBrain(
+  message: string,
+  history: Turn[] = [],
+  extraContext = "",
+): Promise<BrainResult> {
   const res = await getClient().messages.create({
     model: MODEL,
     max_tokens: 1024,
-    system: SYSTEM,
+    system: SYSTEM + (extraContext ? `\n\n${extraContext}` : ""),
     tools: [
       { name: "answer", description: ANSWER_DESC, input_schema: ANSWER_PARAMS as any },
       { name: "save_listing", description: LISTING_DESC, input_schema: LISTING_PARAMS as any },

@@ -17,12 +17,16 @@ function getClient(): OpenAI {
   return client;
 }
 
-export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
+export async function runBrain(
+  message: string,
+  history: Turn[] = [],
+  extraContext = "",
+): Promise<BrainResult> {
   const res = await getClient().chat.completions.create({
     model: MODEL,
     temperature: 0.3,
     messages: [
-      { role: "system", content: SYSTEM },
+      { role: "system", content: SYSTEM + (extraContext ? `\n\n${extraContext}` : "") },
       ...history.map((h) => ({ role: h.role, content: h.content })),
       { role: "user", content: message },
     ],

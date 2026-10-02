@@ -4,6 +4,7 @@ import { parseInbound, sendWhatsApp, verifyWhapiSignature } from "@/lib/whapi";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 // Setup/verification ping (and a quick manual health check).
 export async function GET(req: NextRequest) {

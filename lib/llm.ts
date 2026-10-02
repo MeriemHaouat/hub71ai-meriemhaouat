@@ -9,8 +9,12 @@ const PROVIDER = (process.env.LLM_PROVIDER || "openai").toLowerCase();
 export const activeProvider =
   PROVIDER === "claude" || PROVIDER === "anthropic" ? "claude" : "openai";
 
-export async function runBrain(message: string, history: Turn[] = []): Promise<BrainResult> {
+export async function runBrain(
+  message: string,
+  history: Turn[] = [],
+  extraContext = "",
+): Promise<BrainResult> {
   return activeProvider === "claude"
-    ? runClaude(message, history)
-    : runOpenAI(message, history);
+    ? runClaude(message, history, extraContext)
+    : runOpenAI(message, history, extraContext);
 }
