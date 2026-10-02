@@ -1,4 +1,4 @@
-import { extractReport } from "./anthropic";
+import { extractReport } from "./llm";
 import { coordsForArea } from "./areas";
 import { adminSupabase } from "./supabase";
 import type { Extracted, Report } from "./types";

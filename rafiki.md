@@ -41,7 +41,7 @@ one-liner → live demo → **"and here's the business" (HR/B2B, fits my backgro
 | Layer | Choice | Why |
 |---|---|---|
 | App | **Next.js (App Router) on Vercel** | one repo, one deploy, instant public URL (also the webhook URL) |
-| Brain | **Claude (Anthropic)** — `claude-opus-4-8`, tool calling | structured extraction of reports; reuses the funded Upfleet key (no OpenAI key existed) |
+| Brain | **OpenAI (default) + Claude (fallback)**, tool calling — switch via `LLM_PROVIDER` | structured extraction of reports; OpenAI for the OpenAI-hosted event, Claude reuses the funded Upfleet key |
 | WhatsApp | **WHAPI** (`gate.whapi.cloud`) | no Meta Business verification; reuse existing paired account (see §4) |
 | Store + realtime | **Supabase** | DB + realtime subscription = the "pin appears live" wow moment |
 | Map | **Leaflet + OpenStreetMap** | free, no API key, no billing |
