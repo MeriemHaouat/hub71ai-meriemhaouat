@@ -1,6 +1,15 @@
 "use client";
 
-import { TYPE_COLORS, TYPE_LABELS, type Report } from "@/lib/types";
+import { ShieldAlert, Home, Building2, Stethoscope, Info } from "lucide-react";
+import { TYPE_COLORS, TYPE_LABELS, type Report, type ReportType } from "@/lib/types";
+
+const ICON: Record<ReportType, typeof Info> = {
+  scam: ShieldAlert,
+  rent: Home,
+  landlord: Building2,
+  clinic: Stethoscope,
+  other: Info,
+};
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -21,38 +30,44 @@ export default function Feed({
 }) {
   if (reports.length === 0) {
     return (
-      <p className="px-1 py-6 text-sm text-neutral-400">
+      <p className="px-1 py-8 text-center text-[0.875rem] text-upfleet-tertiary">
         No reports yet. Send Rafiki a tip to drop the first pin.
       </p>
     );
   }
 
   return (
-    <ul className="space-y-2">
-      {reports.map((r) => (
-        <li
-          key={r.id}
-          className={`rounded-xl border px-3 py-2.5 transition ${
-            r.id === newestId ? "border-black bg-neutral-50" : "border-neutral-200"
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span
-              className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide"
-              style={{ color: TYPE_COLORS[r.type] ?? TYPE_COLORS.other }}
-            >
+    <ul className="space-y-2.5">
+      {reports.map((r) => {
+        const color = TYPE_COLORS[r.type] ?? TYPE_COLORS.other;
+        const Icon = ICON[r.type] ?? Info;
+        const isNew = r.id === newestId;
+        return (
+          <li
+            key={r.id}
+            className={`rounded-xl border bg-white px-4 py-3 transition-all ${
+              isNew
+                ? "border-upfleet-dark shadow-card-hover"
+                : "border-upfleet-border shadow-card hover:shadow-card-hover"
+            }`}
+          >
+            <div className="flex items-center justify-between">
               <span
-                className="h-2 w-2 rounded-full"
-                style={{ background: TYPE_COLORS[r.type] ?? TYPE_COLORS.other }}
-              />
-              {TYPE_LABELS[r.type] ?? "Tip"}
-            </span>
-            <span className="text-xs text-neutral-400">{timeAgo(r.created_at)}</span>
-          </div>
-          <div className="mt-1 text-sm text-black">{r.detail}</div>
-          <div className="mt-0.5 text-xs text-neutral-500">{r.area}</div>
-        </li>
-      ))}
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-[0.12em]"
+                style={{ color, backgroundColor: `${color}14` }}
+              >
+                <Icon size={12} strokeWidth={2} />
+                {TYPE_LABELS[r.type] ?? "Tip"}
+              </span>
+              <span className="text-[0.6875rem] text-upfleet-tertiary tabular-nums">
+                {timeAgo(r.created_at)}
+              </span>
+            </div>
+            <p className="mt-2 text-[0.875rem] leading-snug text-upfleet-body">{r.detail}</p>
+            <p className="mt-1 text-[0.75rem] text-upfleet-secondary">{r.area}</p>
+          </li>
+        );
+      })}
     </ul>
   );
 }

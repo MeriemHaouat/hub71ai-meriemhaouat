@@ -17,11 +17,11 @@ export const TYPE_LABELS: Record<ReportType, string> = {
 };
 
 export const TYPE_COLORS: Record<ReportType, string> = {
-  scam: "#dc2626",
-  rent: "#16a34a",
-  landlord: "#2563eb",
-  clinic: "#d97706",
-  other: "#525252",
+  scam: "#DC2626",
+  rent: "#16A34A",
+  landlord: "#0D8FB8",
+  clinic: "#F59E0B",
+  other: "#5B616A",
 };
 
 export interface Report {

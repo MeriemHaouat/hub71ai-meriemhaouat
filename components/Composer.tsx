@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Send, Sparkles } from "lucide-react";
 import type { Report } from "@/lib/types";
 
 const EXAMPLES = [
-  "Scam number +9715XXXXXXX pretending to be the bank, in Al Reem Island",
-  "1BR in Khalifa City, paid AED 48,000/yr with 2 months free",
-  "Great landlord in Al Raha Beach — returned my deposit in a week",
-  "Fast typing centre + medical test clinic in Mussafah, go before 10am",
+  "Scam number pretending to be the bank, in Al Reem Island",
+  "1BR in Khalifa City, paid AED 48,000/yr",
+  "Great landlord in Al Raha Beach — returned my deposit",
+  "Fast medical-test clinic in Mussafah, go before 10am",
 ];
 
 export default function Composer({
@@ -45,36 +46,47 @@ export default function Composer({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-start gap-2">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(text);
-          }}
-          rows={3}
-          placeholder="Message Rafiki a tip — a rent you paid, a scam number, a good landlord…"
-          className="flex-1 resize-none rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-black"
-        />
-      </div>
+    <div className="space-y-4">
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(text);
+        }}
+        rows={3}
+        placeholder="Tell Rafiki a tip — a rent you paid, a scam number, a good landlord, a clinic…"
+        className="w-full resize-none rounded-xl border border-upfleet-border bg-white px-4 py-3 font-body text-[0.9375rem] text-upfleet-dark tracking-brand outline-none transition-colors placeholder:text-upfleet-tertiary focus:border-upfleet-dark"
+      />
+
       <div className="flex items-center justify-between">
-        <span className="text-xs text-neutral-400">⌘/Ctrl + Enter to send</span>
+        <span className="text-[0.6875rem] uppercase tracking-[0.15em] text-upfleet-tertiary">
+          ⌘/Ctrl + Enter
+        </span>
         <button
           onClick={() => send(text)}
           disabled={busy || !text.trim()}
-          className="rounded-full bg-black px-5 py-2 text-sm font-medium text-white transition disabled:opacity-30"
+          className="inline-flex items-center gap-2 rounded-[10px] bg-upfleet-dark px-5 py-2.5 font-body text-[0.8125rem] font-medium text-white tracking-brand transition-all duration-200 hover:-translate-y-px hover:bg-[#1a1d24] hover:shadow-premium disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none"
         >
-          {busy ? "Rafiki is thinking…" : "Send"}
+          {busy ? (
+            "Rafiki is thinking…"
+          ) : (
+            <>
+              <Send size={15} strokeWidth={1.75} /> Send to Rafiki
+            </>
+          )}
         </button>
       </div>
 
       {reply && (
-        <div className="rounded-xl bg-neutral-100 px-3 py-2 text-sm">
-          <span className="mr-1 font-semibold">رفيقي</span> {reply}
+        <div className="flex items-start gap-2.5 rounded-xl border border-upfleet-border bg-upfleet-section-alt px-4 py-3">
+          <Sparkles size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-upfleet-yellow" />
+          <p className="text-[0.875rem] leading-relaxed text-upfleet-body">
+            <span className="font-heading font-semibold text-upfleet-dark">رفيقي</span>{" "}
+            {reply}
+          </p>
         </div>
       )}
-      {error && <div className="text-sm text-scam">{error}</div>}
+      {error && <p className="text-[0.8125rem] text-upfleet-negative">{error}</p>}
 
       <div className="flex flex-wrap gap-2 pt-1">
         {EXAMPLES.map((ex) => (
@@ -82,9 +94,9 @@ export default function Composer({
             key={ex}
             onClick={() => send(ex)}
             disabled={busy}
-            className="rounded-full border border-neutral-200 px-3 py-1 text-xs text-neutral-600 transition hover:border-black hover:text-black disabled:opacity-40"
+            className="rounded-full border border-upfleet-border bg-white px-3 py-1.5 text-[0.75rem] text-upfleet-secondary tracking-brand transition-colors hover:border-upfleet-dark hover:text-upfleet-dark disabled:opacity-40"
           >
-            {ex.length > 42 ? ex.slice(0, 42) + "…" : ex}
+            {ex.length > 38 ? ex.slice(0, 38) + "…" : ex}
           </button>
         ))}
       </div>
