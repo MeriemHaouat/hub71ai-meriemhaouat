@@ -11,13 +11,15 @@ export async function sendWhatsApp(to: string, body: string): Promise<void> {
     console.warn("[whapi] WHAPI_API_TOKEN not set — skipping send");
     return;
   }
+  // Show a natural "typing…" indicator before the reply (scaled to reply length, 2-5s).
+  const typing_time = Math.min(5, Math.max(2, Math.round(body.length / 60)));
   const res = await fetch(`${BASE_URL}/messages/text`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${TOKEN}`,
     },
-    body: JSON.stringify({ to, body }),
+    body: JSON.stringify({ to, body, typing_time }),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
