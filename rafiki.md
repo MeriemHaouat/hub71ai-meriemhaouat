@@ -18,7 +18,7 @@ Owner: Meriem · Build date: **2026-10-02** · Status: pre-build spec
 the nearest clinic or typing centre. It's built *by* newcomers, *for* the next newcomer.
 
 ### Hackathon scope (what we actually build in ~6.5h)
-1. **WhatsApp front door** — Rafiki receives a message, GPT extracts a structured report.
+1. **WhatsApp front door** — Rafiki receives a message, Claude extracts a structured report.
 2. **Living community map** — the report pops up live on a web map.
 
 That's it. Everything below is **"what's next" in the pitch — not code for the day:**
@@ -41,7 +41,7 @@ one-liner → live demo → **"and here's the business" (HR/B2B, fits my backgro
 | Layer | Choice | Why |
 |---|---|---|
 | App | **Next.js (App Router) on Vercel** | one repo, one deploy, instant public URL (also the webhook URL) |
-| Brain | **OpenAI / GPT** (tool calling) | it's an OpenAI hackathon; structured extraction of reports |
+| Brain | **Claude (Anthropic)** — `claude-opus-4-8`, tool calling | structured extraction of reports; reuses the funded Upfleet key (no OpenAI key existed) |
 | WhatsApp | **WHAPI** (`gate.whapi.cloud`) | no Meta Business verification; reuse existing paired account (see §4) |
 | Store + realtime | **Supabase** | DB + realtime subscription = the "pin appears live" wow moment |
 | Map | **Leaflet + OpenStreetMap** | free, no API key, no billing |
@@ -57,7 +57,7 @@ Fallback if a piece fights us: Supabase realtime → poll a JSON endpoint every 
 You (WhatsApp)  ──▶  WHAPI  ──▶  POST /api/webhooks/whapi  (Next.js on Vercel)
                                         │  verify HMAC-SHA256 (WHAPI_WEBHOOK_SECRET)
                                         ▼
-                                 GPT tool-call: extract
+                                 Claude tool-call: extract
                                  { type: scam|rent|landlord|clinic, area, detail, lat, lng }
                                         ▼
                                  insert row  ──▶  Supabase
@@ -81,7 +81,7 @@ We are **reusing the existing Upfleet WHAPI account** (no new pairing needed).
 **Usage log for this number:**
 - Previously used by **Upfleet demo agents** — VAPI voice calls, WHAPI sales/ops auto-reply
   (now disabled), `credit-watch`, and scheduled crons.
-- **2026-10-02 onward:** borrowed for **Rafiki**, built with **Claude Code**, running on **GPT**.
+- **2026-10-02 onward:** borrowed for **Rafiki**, built with **Claude Code**, running on **Claude** (`claude-opus-4-8`, reusing the Upfleet `ANTHROPIC_API_KEY` — no OpenAI key existed).
 - Keep test messages to yourself and `+971585726739` only (per Upfleet's rule: messaging
   strangers can get the line rate-limited/banned).
 - Give **Jordy** a heads-up that the line is borrowed for the hackathon day.
@@ -130,8 +130,10 @@ WHAPI_API_TOKEN=
 WHAPI_WEBHOOK_SECRET=
 WHAPI_BASE_URL=https://gate.whapi.cloud
 
-# OpenAI (new key for the hackathon)
-OPENAI_API_KEY=
+# Claude / Anthropic (reuse the key from demo-platform/.env)
+ANTHROPIC_API_KEY=
+# optional: default claude-opus-4-8; set claude-haiku-4-5 for faster replies
+# ANTHROPIC_MODEL=claude-opus-4-8
 
 # Supabase (new project for Rafiki — do NOT reuse Upfleet's)
 NEXT_PUBLIC_SUPABASE_URL=
@@ -149,7 +151,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 |---|---|
 | 9:15–9:45 | scaffold + **deploy "hello world" to Vercel immediately** (prove deploy early) |
 | 9:45–10:45 | WHAPI receiving + echoing a message — **risk gate** |
-| 10:45–11:30 | GPT extracts structured report → write to Supabase |
+| 10:45–11:30 | Claude extracts structured report → write to Supabase |
 | 11:30–12:00 / 12:45–1:30 | map reads store + drops pins |
 | 1:30–2:15 | realtime live-update wiring (the wow moment) |
 | 2:15–3:00 | seed demo data, black-on-white polish, "رفيقي" accent |

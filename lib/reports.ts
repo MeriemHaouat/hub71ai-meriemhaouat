@@ -1,11 +1,11 @@
-import { extractReport } from "./openai";
+import { extractReport } from "./anthropic";
 import { coordsForArea } from "./areas";
 import { adminSupabase } from "./supabase";
 import type { Extracted, Report } from "./types";
 
 /**
  * Core pipeline shared by the WhatsApp webhook and the web composer:
- * message text -> GPT extraction -> coordinates -> insert into Supabase.
+ * message text -> Claude extraction -> coordinates -> insert into Supabase.
  * Returns the saved report plus the reply Rafiki should send back.
  */
 export async function ingestMessage(

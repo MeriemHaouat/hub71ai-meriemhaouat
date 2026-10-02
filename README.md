@@ -24,7 +24,7 @@ Deploy: push to GitHub → import into **Vercel** → add the same env vars → 
 WHAPI webhook to `https://<your-deploy>.vercel.app/api/webhooks/whapi`.
 
 ## Stack
-Next.js (Vercel) · OpenAI (GPT, tool calling) · WHAPI (WhatsApp) · Supabase (store + realtime) · Leaflet + OpenStreetMap.
+Next.js (Vercel) · Claude (Anthropic, tool calling) · WHAPI (WhatsApp) · Supabase (store + realtime) · Leaflet + OpenStreetMap.
 
 ## Status
 Pre-build scaffold. Hackathon scope = WhatsApp report → live community map pin.
