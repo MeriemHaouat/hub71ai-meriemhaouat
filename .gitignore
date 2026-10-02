@@ -19,3 +19,6 @@ supabase/.temp/
 supabase/.branches/
 .env*
 .whapi-webhook-backup.json
+
+# gstack local
+.gstack/

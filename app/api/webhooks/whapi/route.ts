@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ingestMessage } from "@/lib/reports";
+import { handleMessage } from "@/lib/reports";
 import { parseInbound, sendWhatsApp, verifyWhapiSignature } from "@/lib/whapi";
 
 export const runtime = "nodejs";
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   // whole batch — webhooks should return 200 so WHAPI doesn't retry-storm.
   for (const msg of inbound) {
     try {
-      const { reply } = await ingestMessage(msg.text, "whatsapp");
+      const { reply } = await handleMessage(msg.text, "whatsapp");
       await sendWhatsApp(msg.chatId, reply);
     } catch (err) {
       console.error("[whapi] failed to process message:", err);

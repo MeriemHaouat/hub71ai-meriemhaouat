@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ingestMessage } from "@/lib/reports";
+import { handleMessage } from "@/lib/reports";
 import { adminSupabase } from "@/lib/supabase";
 import seed from "@/data/reports.seed.json";
 import { coordsForArea } from "@/lib/areas";
@@ -56,10 +56,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { report, reply } = await ingestMessage(text.trim(), "web");
-    return NextResponse.json({ report, reply });
+    const { kind, reply, report } = await handleMessage(text.trim(), "web");
+    return NextResponse.json({ kind, reply, report });
   } catch (err: any) {
-    console.error("[api/reports] ingest failed:", err);
+    console.error("[api/reports] handle failed:", err);
     return NextResponse.json(
       { error: err?.message || "ingest failed" },
       { status: 500 },

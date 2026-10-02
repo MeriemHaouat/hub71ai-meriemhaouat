@@ -35,7 +35,7 @@ export interface Report {
   created_at: string;
 }
 
-/** What GPT returns for one incoming message. */
+/** A community contribution extracted from a message. */
 export interface Extracted {
   type: ReportType;
   area: string;
@@ -43,4 +43,15 @@ export interface Extracted {
   lat?: number;
   lng?: number;
   reply: string;
+}
+
+/**
+ * Rafiki's decision for one incoming message:
+ * - "answer"  → a question/help request; reply only, nothing saved.
+ * - "listing" → a genuine community contribution; save it + reply.
+ */
+export interface BrainResult {
+  kind: "answer" | "listing";
+  reply: string;
+  listing?: Extracted;
 }

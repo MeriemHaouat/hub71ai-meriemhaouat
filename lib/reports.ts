@@ -1,28 +1,40 @@
-import { extractReport } from "./llm";
+import { runBrain } from "./llm";
 import { coordsForArea } from "./areas";
 import { adminSupabase } from "./supabase";
-import type { Extracted, Report } from "./types";
+import type { Report } from "./types";
+
+export interface HandledMessage {
+  kind: "answer" | "listing";
+  reply: string;
+  report?: Report;
+}
 
 /**
- * Core pipeline shared by the WhatsApp webhook and the web composer:
- * message text -> Claude extraction -> coordinates -> insert into Supabase.
- * Returns the saved report plus the reply Rafiki should send back.
+ * Core pipeline shared by the WhatsApp webhook and the web API:
+ * message -> Rafiki brain decides intent.
+ *  - answer:  reply only, nothing saved.
+ *  - listing: resolve coordinates, save to Supabase, reply.
  */
-export async function ingestMessage(
+export async function handleMessage(
   text: string,
   source: string,
-): Promise<{ report: Report; reply: string }> {
-  const extracted: Extracted = await extractReport(text);
+): Promise<HandledMessage> {
+  const result = await runBrain(text);
 
+  if (result.kind !== "listing" || !result.listing) {
+    return { kind: "answer", reply: result.reply };
+  }
+
+  const ex = result.listing;
   const [lat, lng] =
-    typeof extracted.lat === "number" && typeof extracted.lng === "number"
-      ? [extracted.lat, extracted.lng]
-      : coordsForArea(extracted.area);
+    typeof ex.lat === "number" && typeof ex.lng === "number"
+      ? [ex.lat, ex.lng]
+      : coordsForArea(ex.area);
 
   const row = {
-    type: extracted.type,
-    area: extracted.area,
-    detail: extracted.detail,
+    type: ex.type,
+    area: ex.area,
+    detail: ex.detail,
     lat,
     lng,
     source,
@@ -30,22 +42,15 @@ export async function ingestMessage(
 
   const db = adminSupabase();
   if (!db) {
-    // No DB configured yet (early dev) — return an ephemeral report so the
-    // flow still works end-to-end locally.
     const report: Report = {
       id: `local-${text.length}-${lat}-${lng}`,
       created_at: new Date().toISOString(),
       ...row,
     };
-    return { report, reply: extracted.reply };
+    return { kind: "listing", reply: result.reply, report };
   }
 
-  const { data, error } = await db
-    .from("reports")
-    .insert(row)
-    .select()
-    .single();
-
+  const { data, error } = await db.from("reports").insert(row).select().single();
   if (error) throw new Error(`supabase insert failed: ${error.message}`);
-  return { report: data as Report, reply: extracted.reply };
+  return { kind: "listing", reply: result.reply, report: data as Report };
 }
