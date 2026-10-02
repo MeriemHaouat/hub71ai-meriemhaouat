@@ -62,10 +62,12 @@ export default function Dashboard() {
   const [openOffer, setOpenOffer] = useState<any | null>(null);
   const [joined, setJoined] = useState<Record<string, boolean>>({});
   const [interested, setInterested] = useState<Record<string, boolean>>({});
+  const [focusId, setFocusId] = useState<string | null>(null);
 
   const addReport = useCallback((r: Report) => {
     setReports((prev) => (prev.some((x) => x.id === r.id) ? prev : [r, ...prev]));
     setNewestId(r.id);
+    setFocusId(r.id);
   }, []);
 
   useEffect(() => {
@@ -252,7 +254,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="h-[440px] w-full lg:h-[560px]">
-                <MapView reports={reports} newestId={newestId} />
+                <MapView reports={reports} newestId={newestId} focusId={focusId} />
               </div>
             </div>
           </div>
@@ -263,7 +265,7 @@ export default function Dashboard() {
                 <span className="rounded-full bg-upfleet-section-alt px-2.5 py-0.5 text-[0.6875rem] font-semibold text-upfleet-secondary tabular-nums">{reports.length}</span>
               </div>
               <div className="max-h-[520px] overflow-y-auto pr-1">
-                <Feed reports={reports} newestId={newestId} />
+                <Feed reports={reports} newestId={newestId} onSelect={(r) => setFocusId(r.id)} />
               </div>
             </div>
           </div>

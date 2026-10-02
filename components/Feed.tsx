@@ -24,9 +24,11 @@ function timeAgo(iso: string): string {
 export default function Feed({
   reports,
   newestId,
+  onSelect,
 }: {
   reports: Report[];
   newestId: string | null;
+  onSelect?: (r: Report) => void;
 }) {
   if (reports.length === 0) {
     return (
@@ -45,11 +47,13 @@ export default function Feed({
         return (
           <li
             key={r.id}
-            className={`rounded-xl border bg-white px-4 py-3 transition-all ${
+            onClick={() => onSelect?.(r)}
+            className={`cursor-pointer rounded-xl border bg-white px-4 py-3 transition-all hover:-translate-y-px ${
               isNew
                 ? "border-upfleet-dark shadow-card-hover"
                 : "border-upfleet-border shadow-card hover:shadow-card-hover"
             }`}
+            title="Show on map"
           >
             <div className="flex items-center justify-between">
               <span

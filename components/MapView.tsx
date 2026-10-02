@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect } from "react";
@@ -33,11 +33,13 @@ function FlyTo({ report }: { report: Report | null }) {
 export default function MapView({
   reports,
   newestId,
+  focusId,
 }: {
   reports: Report[];
   newestId: string | null;
+  focusId?: string | null;
 }) {
-  const newest = reports.find((r) => r.id === newestId) ?? null;
+  const focus = reports.find((r) => r.id === (focusId ?? newestId)) ?? null;
 
   return (
     <MapContainer
@@ -75,7 +77,19 @@ export default function MapView({
           </Popup>
         </Marker>
       ))}
-      <FlyTo report={newest} />
+      {focus && (
+        <Circle
+          center={[focus.lat, focus.lng]}
+          radius={900}
+          pathOptions={{
+            color: TYPE_COLORS[focus.type] ?? TYPE_COLORS.other,
+            weight: 1.5,
+            fillColor: TYPE_COLORS[focus.type] ?? TYPE_COLORS.other,
+            fillOpacity: 0.12,
+          }}
+        />
+      )}
+      <FlyTo report={focus} />
     </MapContainer>
   );
 }
